@@ -20,7 +20,7 @@ const NUM_STAGES   = 8;              // ステージ数
 const VISIT_MARGIN = L;              // 島の半径＋この距離で訪問判定
 
 const SAIL_C       = 2.2;            // 帆の推力係数
-const DRAG         = 0.7;            // 水の抵抗（速度に比例）
+const DRAG         = 0.35;           // 水の抵抗（速度に比例）
 const BACK_DRAG_MULT = 3;            // 後退時の抵抗倍率（到達速度を前進の約1/3に）
 const RUDDER_DRAG  = 0.35;           // 舵を切ったときの減速
 const RUDDER_K     = 0.12;           // 旋回係数（角速度 = K * 舵角 * 速度）

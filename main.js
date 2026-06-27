@@ -232,21 +232,16 @@ function drawWaves() {
 
 /* 旋回半径に対応した進路を白点線で海面（ワールド座標）に描く。
    進路の曲率 κ = -RUDDER_K·舵角（速度に依存しない一定値）→ 円弧になる */
-function drawPath() {
-  if (Math.abs(v) < 0.05) return;                  // 停止中は描かない
+// 進路（円弧）のワールド座標の点列を返す。停止中は null。メイン画面とミニマップで共用
+function pathPoints() {
+  if (Math.abs(v) < 0.05) return null;             // 停止中は描かない
   const kappa = -RUDDER_K * rudderB;
   const dir = v >= 0 ? 1 : -1;                      // 後進時は逆向きに伸ばす
   let len = 45;                                     // 先読みする弧長（ワールド単位）
   if (Math.abs(kappa) > 1e-5) len = Math.min(len, (Math.PI * 1.8) / Math.abs(kappa));
   const N = 40;
-  ctx.save();
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 0.11;
-  ctx.lineCap = 'round';
-  ctx.setLineDash([0.6, 0.9]);
-  ctx.beginPath();
-  ctx.moveTo(pos.x, pos.y);
-  for (let i = 1; i <= N; i++) {
+  const pts = [];
+  for (let i = 0; i <= N; i++) {
     const s = dir * len * (i / N);
     let x, y;
     if (Math.abs(kappa) < 1e-5) {                   // 直進（舵中央）
@@ -256,8 +251,22 @@ function drawPath() {
       x = pos.x + (Math.sin(theta + kappa * s) - Math.sin(theta)) / kappa;
       y = pos.y + (Math.cos(theta) - Math.cos(theta + kappa * s)) / kappa;
     }
-    ctx.lineTo(x, y);
+    pts.push({ x, y });
   }
+  return pts;
+}
+
+function drawPath() {
+  const pts = pathPoints();
+  if (!pts) return;
+  ctx.save();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 0.11;
+  ctx.lineCap = 'round';
+  ctx.setLineDash([0.6, 0.9]);
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
@@ -415,6 +424,21 @@ function renderMinimap() {
     mctx.fill();
     if (isl.visited) drawFlag(mctx, q.x, q.y, flagRight, 0.42);  // 小さな赤い旗
   }
+  // 進行方向の曲線（白点線）
+  const pts = pathPoints();
+  if (pts) {
+    mctx.strokeStyle = '#ffffff';
+    mctx.lineWidth = 1.5;
+    mctx.lineCap = 'round';
+    mctx.setLineDash([3, 3]);
+    mctx.beginPath();
+    const a = plot(pts[0].x, pts[0].y);
+    mctx.moveTo(a.x, a.y);
+    for (let i = 1; i < pts.length; i++) { const q = plot(pts[i].x, pts[i].y); mctx.lineTo(q.x, q.y); }
+    mctx.stroke();
+    mctx.setLineDash([]);
+  }
+
   // 自船（中央・常に上向き）
   mctx.save();
   mctx.translate(cx, cy);

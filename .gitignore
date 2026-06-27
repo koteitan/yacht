@@ -1,0 +1,5 @@
+# live-server logs
+.live-server-*.log
+
+# commit skill working file
+commit-msg.txt

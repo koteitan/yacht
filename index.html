@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>yacht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ゲーム本体 -->
+<canvas id="game"></canvas>
+
+<!-- HUD: タイマー / 残り島数 -->
+<div id="hud">
+  <span id="timer">00:00.00</span>
+  <span id="remain">島 0 / 5</span>
+</div>
+
+<!-- 右下: ミニマップ -->
+<canvas id="minimap" width="150" height="150"></canvas>
+
+<!-- 上部中央（タイムの下）: サイドチェンジ ボタン -->
+<button id="side-btn" aria-label="change side">&#8644;<small>サイドチェンジ</small></button>
+
+<!-- 右上: ハンバーガーメニュー -->
+<button id="menu-btn" aria-label="menu">&#9776;</button>
+<div id="menu" class="hidden">
+  <button id="help-btn">ヘルプ</button>
+</div>
+
+<!-- ヘルプ オーバーレイ（表示のみ・動作なし） -->
+<div id="help" class="overlay hidden">
+  <div id="help-side" class="help-callout">&#8644; サイドチェンジ<br><span>上部中央のボタンで船の向き（左右）を反転</span></div>
+  <div id="help-bottom">
+    <div id="help-left" class="help-zone">
+      <div class="help-title">舵（船尾側）</div>
+      <div class="help-desc">上下スワイプで舵を切る<br>（帆と上下が逆）</div>
+      <div class="help-arrow">&#8597;</div>
+    </div>
+    <div id="help-right" class="help-zone">
+      <div class="help-title">メインシート（船首側）</div>
+      <div class="help-desc">上下スワイプで帆を調整</div>
+      <div class="help-arrow">&#8597;</div>
+    </div>
+  </div>
+  <div id="help-note">※ 船首側／船尾側の左右はサイドチェンジで入れ替わります</div>
+  <button id="help-close">閉じる</button>
+</div>
+
+<!-- ステージセレクト -->
+<div id="select" class="overlay">
+  <h1>yacht</h1>
+  <p class="sub">5個の島をすべて巡れ — タイムアタック</p>
+  <div id="select-list"></div>
+</div>
+
+<!-- クリア -->
+<div id="clear" class="overlay hidden">
+  <h1>STAGE CLEAR!</h1>
+  <div id="clear-msg"></div>
+  <div class="btn-row">
+    <button id="next-btn">次のステージ</button>
+    <button id="select-btn">ステージ選択</button>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
